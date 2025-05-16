@@ -1,0 +1,9 @@
+<workunit>
+    <file_info>
+        <name><input_filename/></name>
+        <nbytes><input_filesize/></nbytes>
+    </file_info>
+    <command>
+        python apps/<skill>/train_local.py --weights <input_weights> --data <input_data> --output output.txt
+    </command>
+</workunit>
