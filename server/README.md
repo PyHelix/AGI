@@ -7,6 +7,8 @@ Copy its contents into the project directory created by `make_project`.
   and `train_local.py` runner in each.
 - `wu_template.xml` and `result_template.xml` describe the input and output
   files for a work unit.
-- `validator.py` checks returned results.
-- `fed_avg.py` aggregates accepted weight deltas.
+- `validator.py` checks returned results and exposes a simple threshold on the
+  reported reward.
+- `fed_avg.py` aggregates accepted weight deltas using the reward as a weight so
+  better updates contribute more.
 - `setup_project.sh` demonstrates how to generate work units.

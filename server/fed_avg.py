@@ -3,17 +3,31 @@ from pathlib import Path
 
 
 def aggregate(delta_paths):
-    # Placeholder aggregator: just average numbers from delta files
-    totals = []
+    # Aggregate weight deltas from worker results. Each delta may include a
+    # reward score which is used as a weight when averaging. This allows nodes
+    # that produced better updates to influence the new weight more strongly.
+    weighted = []
     for p in delta_paths:
+        delta = None
+        reward = 1.0
         with open(p) as f:
             for line in f:
                 if line.startswith("delta:"):
-                    val = float(line.split(":",1)[1].strip())
-                    totals.append(val)
-    if not totals:
+                    delta = float(line.split(":", 1)[1].strip())
+                elif line.startswith("reward:"):
+                    reward = float(line.split(":", 1)[1].strip())
+        if delta is not None:
+            weighted.append((delta, reward))
+
+    if not weighted:
         return 0.0
-    return sum(totals) / len(totals)
+
+    total_reward = sum(r for _, r in weighted)
+    if total_reward == 0:
+        # Avoid divide-by-zero; fall back to simple average
+        return sum(d for d, _ in weighted) / len(weighted)
+
+    return sum(d * r for d, r in weighted) / total_reward
 
 
 def main():
