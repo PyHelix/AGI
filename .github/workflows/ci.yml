@@ -33,6 +33,13 @@ jobs:
       - name: Build worker image
         run: docker build -t aginet-worker .
 
+  trivy-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Scan with Trivy
+        uses: ./.github/actions/trivy-action
+
   build-and-push:
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest

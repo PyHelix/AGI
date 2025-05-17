@@ -1,0 +1,15 @@
+name: 'Trivy Scan'
+description: 'Scan repository with Trivy for critical vulnerabilities'
+runs:
+  using: 'composite'
+  steps:
+    - name: Install Trivy
+      shell: bash
+      run: |
+        sudo apt-get update -y
+        sudo apt-get install -y wget
+        wget -qO trivy.deb https://github.com/aquasecurity/trivy/releases/download/v0.50.2/trivy_0.50.2_Linux-64bit.deb
+        sudo dpkg -i trivy.deb
+    - name: Run Trivy scan
+      shell: bash
+      run: trivy fs --severity CRITICAL --exit-code 1 .
