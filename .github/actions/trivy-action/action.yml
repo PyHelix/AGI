@@ -1,0 +1,8 @@
+name: "Local Trivy Scan"
+description: "Run Trivy filesystem scan"
+runs:
+  using: "composite"
+  steps:
+    - name: Run Trivy
+      run: |
+        trivy fs --severity CRITICAL --exit-code 1 .

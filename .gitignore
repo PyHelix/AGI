@@ -30,3 +30,20 @@
 *.exe
 *.out
 *.app
+# Python artifacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+venv/
+.venv/
+
+# Simulation outputs
+sim_tmp/
+sim.png
+fedopt_state.json
+global_weights.enc
+next_wu_id.txt
+wheelhouse/
