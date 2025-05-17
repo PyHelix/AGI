@@ -1,18 +1,7 @@
 import argparse
 from pathlib import Path
 
-
-def ppo_train(weights: Path, data: Path, steps: int, lr: float):
-    """Placeholder PPO loop with 4-bit LoRA.
-    This does not implement real training but simulates updates."""
-    delta = 0.0
-    reward = 0.0
-    for _ in range(steps):
-        # Fake optimization step
-        delta += 0.01 * lr
-        reward += 0.1
-    reward /= steps
-    return delta, reward
+from server.apps.common.train_utils import ppo_loop
 
 
 def main():
@@ -24,9 +13,13 @@ def main():
     parser.add_argument("--lr", type=float, default=1e-4, help="Learning rate")
     args = parser.parse_args()
 
-    delta, reward = ppo_train(Path(args.weights), Path(args.data), args.steps, args.lr)
+    delta, reward, kl, loss_before, loss_after = ppo_loop(
+        Path(args.weights), Path(args.data), args.steps, args.lr
+    )
     output = Path(args.output)
-    output.write_text(f"delta: {delta}\nreward: {reward}\n")
+    output.write_text(
+        f"delta: {delta}\nreward: {reward}\nkl: {kl}\nloss_before: {loss_before}\nloss_after: {loss_after}\n"
+    )
 
 
 if __name__ == "__main__":

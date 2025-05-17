@@ -2,6 +2,10 @@
 
 This repository demonstrates a minimal pipeline for decentralized model training using the [BOINC](https://boinc.berkeley.edu/) server tools. Volunteers download tasks, perform local fine‑tuning on small quantized models and send weight updates back to the server.
 
+```
+router.py -> generate_wu.py -> BOINC -> validator.py -> fed_avg.py
+```
+
 ## Steps in brief
 
 1. **Install the BOINC server tools**
