@@ -7,3 +7,4 @@
   },
   "postCreateCommand": "sudo apt-get update && sudo apt-get install -y boinc-server-maker boinc-server-binaries && poetry install"
 }
+
