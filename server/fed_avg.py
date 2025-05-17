@@ -2,15 +2,24 @@ import json
 import os
 import sys
 from pathlib import Path
-from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+try:
+    from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+except Exception:  # pragma: no cover - cryptography optional
+    AESGCM = None
+
+from aginet.log import get_logger
 
 MOMENTUM = 0.9
 STATE_FILE = Path("fedopt_state.json")
 KEY_FILE = Path("project_keys/weights.key")
 OUT_FILE = Path("global_weights.enc")
+log = get_logger(__name__)
 
 
 def encrypt_weight(value: float) -> None:
+    if AESGCM is None:
+        OUT_FILE.write_text(str(value))
+        return
     key = bytes.fromhex(KEY_FILE.read_text().strip())
     aes = AESGCM(key)
     nonce = os.urandom(12)
@@ -21,11 +30,17 @@ def encrypt_weight(value: float) -> None:
 def aggregate(delta_paths):
     totals = []
     for p in delta_paths:
-        with open(p) as f:
-            for line in f:
+        text = p.read_text().strip()
+        try:
+            data = json.loads(text)
+            val = float(data.get("w", 0.0))
+        except json.JSONDecodeError:
+            val = 0.0
+            for line in text.splitlines():
                 if line.startswith("delta:"):
                     val = float(line.split(":", 1)[1].strip())
-                    totals.append(val)
+                    break
+        totals.append(val)
     if not totals:
         return 0.0
     return sum(totals) / len(totals)
@@ -44,7 +59,7 @@ def main():
     state = {"v": v, "weight": weight}
     STATE_FILE.write_text(json.dumps(state))
     encrypt_weight(weight)
-    print(f"new_weight={weight}")
+    log.info("new_weight=%s", weight)
 
 
 if __name__ == "__main__":
