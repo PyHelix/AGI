@@ -1,7 +1,11 @@
 import argparse
+import json
 from pathlib import Path
 
 from server.apps.common.train_utils import ppo_loop
+from aginet.log import get_logger
+
+log = get_logger(__name__)
 
 
 def main():
@@ -17,9 +21,16 @@ def main():
         Path(args.weights), Path(args.data), args.steps, args.lr
     )
     output = Path(args.output)
-    output.write_text(
-        f"delta: {delta}\nreward: {reward}\nkl: {kl}\nloss_before: {loss_before}\nloss_after: {loss_after}\n"
-    )
+    data = {
+        "w": delta,
+        "reward": reward,
+        "kl": kl,
+        "loss_before": loss_before,
+        "loss_after": loss_after,
+        "version": "0.2",
+    }
+    output.write_text(json.dumps(data))
+    log.info("wrote delta to %s", output)
 
 
 if __name__ == "__main__":

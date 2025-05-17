@@ -1,11 +1,25 @@
 import argparse
+import json
 from pathlib import Path
 
 
+def load_value(p: Path) -> float:
+    text = p.read_text().strip()
+    try:
+        data = json.loads(text)
+        return float(data.get("w", 0.0))
+    except json.JSONDecodeError:
+        return float(text)
+
+
+def save_value(p: Path, val: float) -> None:
+    p.write_text(json.dumps({"w": val, "version": "0.2"}))
+
+
 def apply_delta(weight_file: Path, delta_file: Path, out_file: Path) -> None:
-    weight = float(weight_file.read_text().strip())
-    delta = float(delta_file.read_text().strip())
-    out_file.write_text(str(weight + delta))
+    weight = load_value(weight_file)
+    delta = load_value(delta_file)
+    save_value(out_file, weight + delta)
 
 
 def main() -> None:
