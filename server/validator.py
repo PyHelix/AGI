@@ -11,6 +11,8 @@ def validate(delta_path: Path) -> float:
     sha_line = next((line for line in lines if line.startswith('sha256:')), None)
     reward_line = next((line for line in lines if line.startswith('reward:')), None)
     kl_line = next((line for line in lines if line.startswith('kl:')), 'kl:0')
+    before_line = next((line for line in lines if line.startswith('loss_before:')), 'loss_before:0')
+    after_line = next((line for line in lines if line.startswith('loss_after:')), 'loss_after:0')
 
     if not reward_line:
         return 0.0
@@ -23,7 +25,9 @@ def validate(delta_path: Path) -> float:
         return 0.0
 
     kl = float(kl_line.split(':', 1)[1].strip())
-    return reward - kl
+    loss_before = float(before_line.split(':', 1)[1].strip())
+    loss_after = float(after_line.split(':', 1)[1].strip())
+    return reward - kl - (loss_before - loss_after)
 
 
 def main():
