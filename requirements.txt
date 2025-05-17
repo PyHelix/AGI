@@ -1,3 +1,9 @@
+# requirements.txt  ← copy everything inside this block
 requests
 cryptography
 rich
+pytest
+ruff
+torch
+torchvision
+torchaudio
