@@ -8,9 +8,9 @@ def validate(delta_path: Path) -> float:
         return 0.0
     lines = delta_path.read_text().splitlines()
     content_hash = hashlib.sha256(delta_path.read_bytes()).hexdigest()
-    sha_line = next((l for l in lines if l.startswith('sha256:')), None)
-    reward_line = next((l for l in lines if l.startswith('reward:')), None)
-    kl_line = next((l for l in lines if l.startswith('kl:')), 'kl:0')
+    sha_line = next((line for line in lines if line.startswith('sha256:')), None)
+    reward_line = next((line for line in lines if line.startswith('reward:')), None)
+    kl_line = next((line for line in lines if line.startswith('kl:')), 'kl:0')
 
     if not reward_line:
         return 0.0
