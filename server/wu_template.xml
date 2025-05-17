@@ -4,6 +4,11 @@
         <nbytes><input_filesize/></nbytes>
     </file_info>
     <command>
-        python apps/<skill>/train_local.py --weights <input_weights> --data <input_data> --output output.txt
+        python apps/<skill_id>/train_local.py \
+            --weights <input_weights> \
+            --data <data_chunk> \
+            --steps <steps> \
+            --lr <lr> \
+            --output output.txt
     </command>
 </workunit>

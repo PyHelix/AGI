@@ -1,0 +1,9 @@
+{
+  "version": "0.1",
+  "skills": [
+    {"id": "vision", "model_hash": "5944ae849448011ca08c3785f1de1a54c8a96d6c23f787f9d962b624edd4151d", "version": "0.1"},
+    {"id": "language", "model_hash": "a4ef304ba42a200bafd78b046e0869af9183f6eee5524aead5dcb3a5ab5f8f3f", "version": "0.1"},
+    {"id": "memory", "model_hash": "c064fbca9d9de8dd9bb0624984403b28d0da807a69365d4f7fb09123ecb0c405", "version": "0.1"},
+    {"id": "planner", "model_hash": "244b8435061420f6b2887681bbe2d24b18fc8f790a75c5bf16937bb8417e651a", "version": "0.1"}
+  ]
+}
