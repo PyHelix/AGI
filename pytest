@@ -1,0 +1,16 @@
+#!/usr/bin/env python3
+"""Lightweight pytest replacement using unittest discovery."""
+import sys
+import unittest
+
+if __name__ == "__main__":
+    args = sys.argv[1:]
+    if "-q" in args:
+        args.remove("-q")
+        verbosity = 1
+    else:
+        verbosity = 2
+    suite = unittest.defaultTestLoader.discover("tests")
+    runner = unittest.TextTestRunner(verbosity=verbosity)
+    result = runner.run(suite)
+    sys.exit(not result.wasSuccessful())
