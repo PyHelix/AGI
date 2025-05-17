@@ -1,11 +1,17 @@
 FROM python:3.10-slim
 
-# Install minimal dependencies and GPU optimized torch
-RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
-RUN pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-RUN pip install --no-cache-dir requests cryptography
+# System deps
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends git \
+    && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /worker
-COPY . /worker
+# Heavy ML libs (CPU wheels)
+RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
 
-CMD ["bash"]
+# Core Python deps
+RUN pip install requests cryptography rich
+
+WORKDIR /app
+COPY . /app
+
+CMD ["python", "-m", "your_entrypoint"]

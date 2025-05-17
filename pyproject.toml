@@ -1,9 +1,24 @@
-[tool.ruff]
-line-length = 88
+[tool.poetry]
+name = "agi-boinc"
+version = "0.1.0"
+description = "Decentralized AGI project running on BOINC"
+authors = ["Your Name <you@example.com>"]
 
-[tool.mypy]
-python_version = "3.11"
-strict = true
-ignore_missing_imports = true
-allow_redefinition = true
-exclude = ["build"]
+[tool.poetry.dependencies]
+python = "^3.10"
+requests = "^2.31"
+cryptography = "^42.0"
+rich = "^13.7"
+
+# Optional heavyweight deps for worker images
+torch = {version = "^2.2", optional = true}
+torchvision = {version = "^0.17", optional = true}
+torchaudio = {version = "^2.2", optional = true}
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.4"
+pytest = "^8.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

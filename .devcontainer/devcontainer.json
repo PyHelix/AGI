@@ -1,0 +1,9 @@
+{
+  "name": "agi-boinc-dev",
+  "image": "mcr.microsoft.com/devcontainers/python:3.10",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/poetry:1": {}
+  },
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y boinc-server-maker boinc-server-binaries && poetry install"
+}
