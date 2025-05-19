@@ -8,7 +8,7 @@ authors = ["Your Name <you@example.com>"]
 python = "^3.10"
 requests = "^2.31"
 cryptography = "^42.0"
-rich = "^13.7"
+rich = "^14.0"
 
 # Optional heavyweight deps for worker images
 torch = {version = "^2.2", optional = true}
