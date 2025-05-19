@@ -12,7 +12,7 @@ rich = "^13.7"
 
 # Optional heavyweight deps for worker images
 torch = {version = "^2.2", optional = true}
-torchvision = {version = "^0.17", optional = true}
+torchvision = {version = "^0.22", optional = true}
 torchaudio = {version = "^2.2", optional = true}
 
 [tool.poetry.group.dev.dependencies]
