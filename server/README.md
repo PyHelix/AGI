@@ -4,6 +4,8 @@ This folder contains example files for running a BOINC-based training project. C
 
 - `apps/` contains subdirectories for each skill. Put the quantized model file and `train_local.py` runner in each.
 - `wu_template.xml` and `result_template.xml` describe the input and output files for a work unit.
+- `generate_wu.py` creates a work unit for a specific skill and data chunk.
+- `scheduler.py` picks the highest scoring skill and generates the next work unit.
 - `validator.py` checks returned results.
 - `fed_avg.py` aggregates accepted weight deltas.
 - `setup_project.sh` demonstrates how to generate work units.
