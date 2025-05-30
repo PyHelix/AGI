@@ -17,21 +17,14 @@ def next_id() -> int:
     return val
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--skill", required=True)
-    parser.add_argument("--data", required=True)
-    parser.add_argument("--out", required=True)
-    args = parser.parse_args()
-
-    out_dir = Path(args.out)
+def create_wu(skill: str, data: Path, out_dir: Path) -> Path:
+    """Create a work-unit directory with copied files and return XML path."""
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    data_src = Path(args.data)
-    data_dst = out_dir / data_src.name
-    shutil.copy2(data_src, data_dst)
+    data_dst = out_dir / data.name
+    shutil.copy2(data, data_dst)
 
-    weights_src = Path(f"apps/{args.skill}/init_weights.txt")
+    weights_src = Path(f"apps/{skill}/init_weights.txt")
     weights_dst = out_dir / weights_src.name
     shutil.copy2(weights_src, weights_dst)
 
@@ -39,14 +32,26 @@ def main() -> None:
     ctx = {
         "input_filename": data_dst.name,
         "input_filesize": data_dst.stat().st_size,
-        "skill_id": args.skill,
+        "skill_id": skill,
         "input_weights": weights_dst.name,
         "data_chunk": data_dst.name,
         "steps": 100,
         "lr": 1e-4,
     }
     xml = Template(TEMPLATE).render(**ctx)
-    (out_dir / f"wu_{wid}.xml").write_text(xml)
+    xml_path = out_dir / f"wu_{wid}.xml"
+    xml_path.write_text(xml)
+    return xml_path
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--skill", required=True)
+    parser.add_argument("--data", required=True)
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+
+    create_wu(args.skill, Path(args.data), Path(args.out))
 
 
 if __name__ == "__main__":

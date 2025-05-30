@@ -7,3 +7,6 @@ This folder contains example files for running a BOINC-based training project. C
 - `validator.py` checks returned results.
 - `fed_avg.py` aggregates accepted weight deltas.
 - `setup_project.sh` demonstrates how to generate work units.
+- `generate_wu.py` provides a `create_wu` helper to build work units.
+- `scheduler.py` picks the highest scoring skill using `router.py` and calls
+  `generate_wu`.
