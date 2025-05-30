@@ -1,2 +1,0 @@
-wheelhouse/*.whl filter=lfs diff=lfs merge=lfs -text
-wheelhouse/ruff-*.whl filter=lfs diff=lfs merge=lfs -text

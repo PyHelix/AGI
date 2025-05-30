@@ -5,14 +5,9 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends git && \
     rm -rf /var/lib/apt/lists/*
 
-# offline wheel cache
-COPY wheelhouse /app/wheelhouse
-ENV PIP_FIND_LINKS=/app/wheelhouse \
-    PIP_NO_INDEX=1
-
-# install all Python deps from wheels
-RUN pip install torch torchvision torchaudio \
-    requests cryptography rich ruff pytest
+# install Python dependencies
+COPY requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
 
 # copy project & set entrypoint
 WORKDIR /app
