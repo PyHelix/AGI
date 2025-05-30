@@ -1,14 +1,14 @@
 <workunit>
     <file_info>
-        <name><input_filename/></name>
-        <nbytes><input_filesize/></nbytes>
+        <name>{input_filename}</name>
+        <nbytes>{input_filesize}</nbytes>
     </file_info>
     <command>
-        python apps/<skill_id>/train_local.py \
-            --weights <input_weights> \
-            --data <data_chunk> \
-            --steps <steps> \
-            --lr <lr> \
+        python apps/{skill_id}/train_local.py \
+            --weights {input_weights} \
+            --data {data_chunk} \
+            --steps {steps} \
+            --lr {lr} \
             --output output.txt
     </command>
 </workunit>
