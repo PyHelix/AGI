@@ -21,7 +21,6 @@ global_weights.enc
 next_wu_id.txt
 
 # Offline wheels
-wheelhouse/
 
 # Backup files
 *.repo
