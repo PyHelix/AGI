@@ -1,8 +1,8 @@
+"""Utility to create BOINC work units from a simple XML template."""
+
 import argparse
 import shutil
 from pathlib import Path
-
-from jinja2 import Template
 
 TEMPLATE = Path(__file__).with_name("wu_template.xml").read_text()
 ID_FILE = Path("next_wu_id.txt")
@@ -17,21 +17,23 @@ def next_id() -> int:
     return val
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--skill", required=True)
-    parser.add_argument("--data", required=True)
-    parser.add_argument("--out", required=True)
-    args = parser.parse_args()
+def _render(ctx: dict[str, str]) -> str:
+    xml = TEMPLATE
+    for key, val in ctx.items():
+        xml = xml.replace(f"<{key}/>", str(val))
+    return xml
 
-    out_dir = Path(args.out)
+
+def create_wu(skill: str, data: Path, out: Path) -> Path:
+    """Create a BOINC work unit directory and return the XML path."""
+    out_dir = Path(out)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    data_src = Path(args.data)
+    data_src = Path(data)
     data_dst = out_dir / data_src.name
     shutil.copy2(data_src, data_dst)
 
-    weights_src = Path(f"apps/{args.skill}/init_weights.txt")
+    weights_src = Path("server/apps") / skill / "init_weights.txt"
     weights_dst = out_dir / weights_src.name
     shutil.copy2(weights_src, weights_dst)
 
@@ -39,14 +41,26 @@ def main() -> None:
     ctx = {
         "input_filename": data_dst.name,
         "input_filesize": data_dst.stat().st_size,
-        "skill_id": args.skill,
+        "skill_id": skill,
         "input_weights": weights_dst.name,
         "data_chunk": data_dst.name,
         "steps": 100,
         "lr": 1e-4,
     }
-    xml = Template(TEMPLATE).render(**ctx)
-    (out_dir / f"wu_{wid}.xml").write_text(xml)
+    xml = _render(ctx)
+    xml_path = out_dir / f"wu_{wid}.xml"
+    xml_path.write_text(xml)
+    return xml_path
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Create a single work unit")
+    parser.add_argument("--skill", required=True)
+    parser.add_argument("--data", required=True)
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+
+    create_wu(args.skill, Path(args.data), Path(args.out))
 
 
 if __name__ == "__main__":

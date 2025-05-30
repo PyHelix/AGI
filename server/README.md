@@ -6,4 +6,6 @@ This folder contains example files for running a BOINC-based training project. C
 - `wu_template.xml` and `result_template.xml` describe the input and output files for a work unit.
 - `validator.py` checks returned results.
 - `fed_avg.py` aggregates accepted weight deltas.
+- `generate_wu.py` creates a single work unit from a data chunk and skill id.
+- `scheduler.py` picks the best skill based on `scoreboard.csv` and calls `generate_wu.py`.
 - `setup_project.sh` demonstrates how to generate work units.
