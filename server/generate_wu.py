@@ -17,21 +17,32 @@ def next_id() -> int:
     return val
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--skill", required=True)
-    parser.add_argument("--data", required=True)
-    parser.add_argument("--out", required=True)
-    args = parser.parse_args()
+def create_wu(skill: str, data: Path, out: Path) -> Path:
+    """Create a BOINC work unit for the given skill and data.
 
-    out_dir = Path(args.out)
+    Parameters
+    ----------
+    skill: str
+        Name of the skill subfolder under ``apps/``.
+    data: Path
+        Path to the training data chunk.
+    out: Path
+        Directory where the work unit files should be written.
+
+    Returns
+    -------
+    Path
+        The path to the generated work-unit XML file.
+    """
+
+    out_dir = Path(out)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    data_src = Path(args.data)
+    data_src = Path(data)
     data_dst = out_dir / data_src.name
     shutil.copy2(data_src, data_dst)
 
-    weights_src = Path(f"apps/{args.skill}/init_weights.txt")
+    weights_src = Path(f"apps/{skill}/init_weights.txt")
     weights_dst = out_dir / weights_src.name
     shutil.copy2(weights_src, weights_dst)
 
@@ -39,14 +50,26 @@ def main() -> None:
     ctx = {
         "input_filename": data_dst.name,
         "input_filesize": data_dst.stat().st_size,
-        "skill_id": args.skill,
+        "skill_id": skill,
         "input_weights": weights_dst.name,
         "data_chunk": data_dst.name,
         "steps": 100,
         "lr": 1e-4,
     }
     xml = Template(TEMPLATE).render(**ctx)
-    (out_dir / f"wu_{wid}.xml").write_text(xml)
+    wu_file = out_dir / f"wu_{wid}.xml"
+    wu_file.write_text(xml)
+    return wu_file
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--skill", required=True)
+    parser.add_argument("--data", required=True)
+    parser.add_argument("--out", required=True)
+    args = parser.parse_args()
+
+    create_wu(args.skill, Path(args.data), Path(args.out))
 
 
 if __name__ == "__main__":
