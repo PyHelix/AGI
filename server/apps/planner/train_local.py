@@ -4,7 +4,7 @@ from pathlib import Path
 
 FILE = Path(__file__).resolve()
 if __package__ is None or __package__ == "":
-    for parent in FILE.parents[:4]:
+    for parent in FILE.parents[1: min(4, len(FILE.parents))]:
         parent_str = str(parent)
         if parent_str not in sys.path:
             sys.path.insert(0, parent_str)
@@ -25,7 +25,7 @@ def main():
     parser.add_argument("--shard-id", help="Optional identifier for this shard")
     parser.add_argument(
         "--resource-class",
-        help="Hardware tier hint (for logging only)",
+        help="Optional resource class hint (for logging only)",
     )
     args = parser.parse_args()
 

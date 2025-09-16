@@ -39,35 +39,6 @@ router.py -> scheduler.py -> generate_wu.py -> BOINC -> volunteer.py -> validato
 
 The `server/` directory of this repository provides example scripts and templates to get started.
 
-## Resource-aware sharding
-
-Large community grids often have a mix of resource tiers.  Use `server/resource_sharder.py`
-to describe the available volunteers and automatically generate work units tailored to each
-shard.  The script reads a JSON file describing every host, divides the data into shards and
-calls `generate_wu.py` with custom step counts, learning rates and shard identifiers so the
-aggregator can keep track of which update came from which hardware tier.
-
-Example `resources.json`:
-
-```json
-[
-  {"id": "gpu-rig-01", "weight": 3.0, "max_tasks": 2, "resource_class": "gpu"},
-  {"id": "edge-node-12", "weight": 1.0, "max_tasks": 1, "resource_class": "cpu"}
-]
-```
-
-Generate sharded work units for the highest priority skill:
-
-```bash
-python server/resource_sharder.py \
-  --skill vision \
-  --data datasets/vision_prompts.jsonl \
-  --resources resources.json \
-  --out work_units/vision \
-  --base-steps 200 \
-  --base-lr 3e-4
-```
-
-Each generated `wu_*.xml` now includes the shard identifier and the resource class which are
-propagated to the volunteers and the training logs, enabling decentralized aggregation and
-auditing across the BOINC swarm.
+To tailor work units to different volunteer tiers, use `server/resource_sharder.py` with a
+JSON resource description. The tool splits your dataset, scales the per-shard hyperparameters,
+and calls `generate_wu.py` so each host receives a fitting task.
