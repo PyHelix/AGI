@@ -17,7 +17,7 @@ torchvision = {version = "^0.17", optional = true}
 torchaudio = {version = "^2.2", optional = true}
 
 [tool.poetry.group.dev.dependencies]
-ruff = "^0.4"
+ruff = "^0.13"
 pytest = "^8.2"
 
 [build-system]
