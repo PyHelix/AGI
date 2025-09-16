@@ -9,6 +9,8 @@
             --data <data_chunk> \
             --steps <steps> \
             --lr <lr> \
-            --output output.txt
+            --output output.txt{% if shard_id %} \
+            --shard-id <shard_id>{% endif %}{% if resource_class %} \
+            --resource-class <resource_class>{% endif %}
     </command>
 </workunit>
