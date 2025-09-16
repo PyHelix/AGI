@@ -1,5 +1,13 @@
 import argparse
+import sys
 from pathlib import Path
+
+FILE = Path(__file__).resolve()
+if __package__ is None or __package__ == "":
+    project_root = FILE.parents[1]
+    project_root_str = str(project_root)
+    if project_root_str not in sys.path:
+        sys.path.insert(0, project_root_str)
 
 from router import pick_best_skill
 from server.generate_wu import create_wu

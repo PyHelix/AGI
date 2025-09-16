@@ -1,15 +1,29 @@
 import argparse
 import shutil
 from pathlib import Path
-from typing import Optional
+from typing import Iterable, Optional
 
 from jinja2 import Template
 
-SCRIPT_DIR = Path(__file__).resolve().parent
-TEMPLATE = (SCRIPT_DIR / "wu_template.xml").read_text()
+TEMPLATE = Path(__file__).with_name("wu_template.xml").read_text()
 ID_FILE = Path("next_wu_id.txt")
-BUNDLED_APPS_DIR = SCRIPT_DIR / "apps"
-LEGACY_APPS_DIR = Path("apps")
+SCRIPT_DIR = Path(__file__).resolve().parent
+
+
+def _weight_candidates(skill: str) -> Iterable[Path]:
+    yield SCRIPT_DIR / "apps" / skill / "init_weights.txt"
+    yield Path("apps") / skill / "init_weights.txt"
+
+
+def _resolve_weights_path(skill: str) -> Path:
+    candidates = list(_weight_candidates(skill))
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+    pretty = ", ".join(str(path) for path in candidates)
+    raise FileNotFoundError(
+        f"could not find init_weights.txt for skill '{skill}' in any of: {pretty}"
+    )
 
 
 def next_id() -> int:
@@ -36,9 +50,7 @@ def create_wu(
     Parameters
     ----------
     skill: str
-        Name of the skill subfolder. ``init_weights.txt`` is resolved relative to this
-        script (``server/apps/<skill>``) with a legacy fallback to ``apps/<skill>`` in the
-        current working directory.
+        Name of the skill subfolder under ``apps/``.
     data: Path
         Path to the training data chunk.
     out: Path
@@ -72,14 +84,7 @@ def create_wu(
     data_dst = out_dir / f"{wid}_{data_src.name}"
     shutil.copy2(data_src, data_dst)
 
-    for weight_dir in (BUNDLED_APPS_DIR, LEGACY_APPS_DIR):
-        weights_src = weight_dir / skill / "init_weights.txt"
-        if weights_src.exists():
-            break
-    else:
-        raise FileNotFoundError(
-            "init_weights.txt not found in bundled server/apps or legacy project apps/ directories"
-        )
+    weights_src = _resolve_weights_path(skill)
     weights_dst = out_dir / f"{wid}_{weights_src.name}"
     shutil.copy2(weights_src, weights_dst)
 

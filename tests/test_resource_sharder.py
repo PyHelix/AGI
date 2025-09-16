@@ -1,11 +1,14 @@
 import json
 import os
+import subprocess
+import sys
 from pathlib import Path
 
-import sys
+import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+import server.generate_wu as generate_wu
 from server.resource_sharder import (
     ResourceSpec,
     create_sharded_work_units,
@@ -61,8 +64,6 @@ def test_plan_shards_cycles_data(tmp_path: Path) -> None:
 def test_create_sharded_work_units_generates_xml(tmp_path: Path) -> None:
     project = tmp_path / "project"
     project.mkdir()
-    (project / "apps" / "vision").mkdir(parents=True)
-    (project / "apps" / "vision" / "init_weights.txt").write_text("0.0")
 
     data_file = project / "prompts.txt"
     data_file.write_text("prompt-1\nprompt-2\nprompt-3\nprompt-4\n")
@@ -93,3 +94,50 @@ def test_create_sharded_work_units_generates_xml(tmp_path: Path) -> None:
     assert "--shard-id" in xml_text
     assert "--resource-class" in xml_text
     assert any(assignment.wu_path is not None for assignment in assignments)
+
+
+def test_create_wu_falls_back_to_legacy_weights(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    project = tmp_path / "legacy"
+    project.mkdir()
+
+    data_file = project / "dataset.txt"
+    data_file.write_text("sample\n")
+
+    legacy_weights_dir = project / "apps" / "vision"
+    legacy_weights_dir.mkdir(parents=True)
+    legacy_weights = legacy_weights_dir / "init_weights.txt"
+    legacy_weights.write_text("legacy-weight")
+
+    def fake_candidates(skill: str):
+        yield Path("/nonexistent") / skill / "init_weights.txt"
+        yield legacy_weights
+
+    monkeypatch.setattr(generate_wu, "_weight_candidates", fake_candidates)
+
+    cwd = os.getcwd()
+    os.chdir(project)
+    try:
+        wu_file = generate_wu.create_wu(
+            "vision",
+            data_file,
+            project / "out",
+            steps=10,
+            lr=1e-3,
+        )
+    finally:
+        os.chdir(cwd)
+
+    assert wu_file.exists()
+    copied_weights = next((project / "out").glob("*_init_weights.txt"))
+    assert copied_weights.read_text() == "legacy-weight"
+
+
+def test_resource_sharder_help_invocation() -> None:
+    script = Path(__file__).resolve().parents[1] / "server" / "resource_sharder.py"
+    result = subprocess.run(
+        [sys.executable, str(script), "--help"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert "Plan sharded work units" in result.stdout
