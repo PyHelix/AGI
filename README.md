@@ -39,6 +39,21 @@ router.py -> scheduler.py -> generate_wu.py -> BOINC -> volunteer.py -> validato
 
 The `server/` directory of this repository provides example scripts and templates to get started.
 
+### Generating a work unit with the bundled weights
+
+`server/generate_wu.py` first looks for `apps/<skill>/init_weights.txt` in the current
+project directory. When you run the script directly from this repository, it will
+automatically fall back to the reference weights stored under `server/apps/`.
+You can verify the setup with a tiny sample file:
+
+```bash
+echo "dummy prompt" > sample.dat
+python server/generate_wu.py --skill vision --data sample.dat --out wu_dir
+```
+
+The command copies the input data and bundled weights into `wu_dir/` and emits a
+`wu_*.xml` description that can be uploaded with the BOINC server tools.
+
 ## Resource-aware sharding
 
 Large community grids often have a mix of resource tiers.  Use `server/resource_sharder.py`
