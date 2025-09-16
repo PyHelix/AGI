@@ -67,16 +67,16 @@ def create_wu(
     data_dst = out_dir / f"{wid}_{data_src.name}"
     shutil.copy2(data_src, data_dst)
 
-    project_weights = Path("apps") / skill / "init_weights.txt"
     bundled_weights = Path(__file__).resolve().parent / "apps" / skill / "init_weights.txt"
+    legacy_weights = Path("apps") / skill / "init_weights.txt"
 
-    if project_weights.exists():
-        weights_src = project_weights
-    elif bundled_weights.exists():
+    if bundled_weights.exists():
         weights_src = bundled_weights
+    elif legacy_weights.exists():
+        weights_src = legacy_weights
     else:
         raise FileNotFoundError(
-            "init_weights.txt not found in project apps/ or bundled server/apps directories"
+            "init_weights.txt not found in bundled server/apps or legacy project apps/ directories"
         )
     weights_dst = out_dir / f"{wid}_{weights_src.name}"
     shutil.copy2(weights_src, weights_dst)
