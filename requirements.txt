@@ -2,6 +2,7 @@
 requests
 cryptography
 rich
+jinja2
 pytest
 ruff
 torch
