@@ -41,9 +41,10 @@ The `server/` directory of this repository provides example scripts and template
 
 ### Generating a work unit with the bundled weights
 
-`server/generate_wu.py` first looks for `apps/<skill>/init_weights.txt` in the current
-project directory. When you run the script directly from this repository, it will
-automatically fall back to the reference weights stored under `server/apps/`.
+`server/generate_wu.py` first looks for `init_weights.txt` bundled alongside the script in
+`server/apps/<skill>/`. Legacy projects that keep weights in a top-level
+`apps/<skill>/` directory are still supported as a fallback. This means you can run the
+helper from the repository root without `cd`-ing into `server/`.
 You can verify the setup with a tiny sample file:
 
 ```bash

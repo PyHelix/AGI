@@ -5,8 +5,11 @@ from typing import Optional
 
 from jinja2 import Template
 
-TEMPLATE = Path(__file__).with_name("wu_template.xml").read_text()
+SCRIPT_DIR = Path(__file__).resolve().parent
+TEMPLATE = (SCRIPT_DIR / "wu_template.xml").read_text()
 ID_FILE = Path("next_wu_id.txt")
+BUNDLED_APPS_DIR = SCRIPT_DIR / "apps"
+LEGACY_APPS_DIR = Path("apps")
 
 
 def next_id() -> int:
@@ -33,7 +36,9 @@ def create_wu(
     Parameters
     ----------
     skill: str
-        Name of the skill subfolder under ``apps/``.
+        Name of the skill subfolder. ``init_weights.txt`` is resolved relative to this
+        script (``server/apps/<skill>``) with a legacy fallback to ``apps/<skill>`` in the
+        current working directory.
     data: Path
         Path to the training data chunk.
     out: Path
@@ -67,13 +72,10 @@ def create_wu(
     data_dst = out_dir / f"{wid}_{data_src.name}"
     shutil.copy2(data_src, data_dst)
 
-    bundled_weights = Path(__file__).resolve().parent / "apps" / skill / "init_weights.txt"
-    legacy_weights = Path("apps") / skill / "init_weights.txt"
-
-    if bundled_weights.exists():
-        weights_src = bundled_weights
-    elif legacy_weights.exists():
-        weights_src = legacy_weights
+    for weight_dir in (BUNDLED_APPS_DIR, LEGACY_APPS_DIR):
+        weights_src = weight_dir / skill / "init_weights.txt"
+        if weights_src.exists():
+            break
     else:
         raise FileNotFoundError(
             "init_weights.txt not found in bundled server/apps or legacy project apps/ directories"

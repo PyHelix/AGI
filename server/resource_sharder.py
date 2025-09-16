@@ -5,12 +5,17 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import sys
 from dataclasses import dataclass
 from itertools import cycle
 from pathlib import Path
 from typing import Iterable, List, Sequence
 
-from server.generate_wu import create_wu
+try:
+    from server.generate_wu import create_wu
+except ModuleNotFoundError:  # pragma: no cover - allows running as a script from repo root
+    sys.path.append(str(Path(__file__).resolve().parent))
+    from generate_wu import create_wu
 
 
 @dataclass(slots=True)
