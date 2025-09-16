@@ -7,3 +7,16 @@ This folder contains example files for running a BOINC-based training project. C
 - `validator.py` checks returned results.
 - `fed_avg.py` aggregates accepted weight deltas.
 - `setup_project.sh` demonstrates how to generate work units.
+
+## Generating work units from the repository root
+
+The helper script can be called directly from the repository root. It first looks for
+bundled weight files under `server/apps/` and falls back to a legacy `apps/` directory if
+you have already copied the project assets elsewhere.
+
+```bash
+python server/generate_wu.py \
+  --skill language \
+  --data /path/to/chunk.jsonl \
+  --out work_units/language
+```
