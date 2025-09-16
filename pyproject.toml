@@ -9,7 +9,7 @@ python = "^3.10"
 requests = "^2.31"
 cryptography = "^42.0"
 rich = "^13.7"
-jinja2 = "^3.1.4"
+jinja2 = "^3.1.6"
 
 # Optional heavyweight deps for worker images
 torch = {version = "^2.2", optional = true}
