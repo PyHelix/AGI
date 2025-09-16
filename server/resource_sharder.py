@@ -11,11 +11,14 @@ from itertools import cycle
 from pathlib import Path
 from typing import Iterable, List, Sequence
 
-try:
-    from server.generate_wu import create_wu
-except ModuleNotFoundError:  # pragma: no cover - allows running as a script from repo root
-    sys.path.append(str(Path(__file__).resolve().parent))
-    from generate_wu import create_wu
+FILE = Path(__file__).resolve()
+if __package__ is None or __package__ == "":
+    parent = FILE.parents[1]
+    parent_str = str(parent)
+    if parent_str not in sys.path:
+        sys.path.insert(0, parent_str)
+
+from server.generate_wu import create_wu
 
 
 @dataclass(slots=True)
